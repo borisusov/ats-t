@@ -1,0 +1,23 @@
+---
+- name: Duct-Tape for Update all packages! Debian
+  copy:
+    content: "{{ansible_date_time.date}}"
+    dest: /opt/sytem_update_timestamp
+    force: no
+    group: root
+    owner: root
+    mode: 0444
+  register: updated
+
+- name: Upgrade all Debian packages to the latest version
+  apt:
+    name: "*"
+    state: latest
+    force_apt_get: yes
+    update_cache: yes
+  when: updated.changed
+
+- name: Install Debian Packages
+  package:
+    name: "{{ package_list_deb }}"
+    state: present

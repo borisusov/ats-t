@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: false
+  roles:
+    - python
+
+- hosts: www
+  become: yes
+  gather_facts: true
+  roles:
+    - update

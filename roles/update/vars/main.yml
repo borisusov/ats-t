@@ -1,0 +1,24 @@
+---
+epel_repo_url: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version }}.noarch.rpm"
+epel_repo_gpg_key_url: "/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-{{ ansible_distribution_major_version }}"
+epel_repofile_path: "/etc/yum.repos.d/epel.repo"
+package_list:
+  - python-pip
+  - python
+  - zip
+  - unzip
+
+# "{{ list_one }} + {{ list_two }}" "{{ package_list }} + [ 'item1', 'item2' ]"
+# package_list_deb: "{{ package_list }} + [ 'network-manager' ]"
+# package_list_rhel: "{{ package_list }} + [ 'net-tools' ]"
+package_list_deb: 
+  - network-manager
+package_list_rhel: 
+  - net-tools
+
+nginx_root: '/opt/nginx/'
+nginx_folders:
+  - "test"
+  - "static"
+  - "documents"
+  - "downloads"

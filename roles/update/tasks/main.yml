@@ -1,0 +1,55 @@
+---
+- include: CentOS.yml
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+  # when: "ansible_facts['os_family'] == 'RedHat'"
+
+- include: Debian.yml
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  # when: "ansible_facts['os_family'] == 'Debian'"
+
+- name: Install Common Packages
+  package:
+    name: "{{ package_list }}"
+    state: present
+
+- name: Install Nginx
+  package:
+    name: nginx
+    state: present
+  notify: restart nginx
+
+- name: "Create folders in {{nginx_root}}"
+  file:
+    path: "{{nginx_root}}{{ item }}"
+    state: directory
+    mode: 0755
+  loop: "{{ nginx_folders }}"
+
+- name: Copy nginx.conf RHEL
+  template:
+    src: nginx.conf.rhel.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0755
+  when: "ansible_facts['os_family'] == 'RedHat'"
+  notify: restart nginx
+
+- name: Copy nginx.conf Debian
+  template:
+    src: nginx.conf.deb.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0755
+  when: "ansible_facts['os_family'] == 'Debian'"
+  notify: restart nginx
+
+- name: "Copy index.html to {{nginx_root}}"
+  template:
+    src: index.html.j2
+    dest: "{{nginx_root}}index.html"
+    owner: root
+    group: root
+    mode: 0755
+  notify: restart nginx
